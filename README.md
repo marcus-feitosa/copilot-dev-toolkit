@@ -23,6 +23,7 @@ cd copilot-dev-toolkit
 
 | Agente | Propósito | Quando usar |
 |--------|-----------|-------------|
+| `domain-extractor` | Gera domain-overview.md + OpenAPI a partir do código | Ao incorporar um serviço existente ao toolkit |
 | `spec-writer` | Gera ADRs, OpenAPI, flows | Antes de implementar qualquer feature |
 | `harness-runner` | Scaffolding, código, migrations | Após spec aprovada |
 | `robot-test-generator` | Testes Robot Framework | Após implementação |
@@ -34,10 +35,11 @@ cd copilot-dev-toolkit
 ## Fluxo SDD recomendado
 
 ```
-1. spec-writer     → spec aprovada via HITL
-2. harness-runner  → código + testes unitários
+0. domain-extractor → (apenas para serviços existentes) gera domain-overview + OpenAPI
+1. spec-writer      → spec aprovada via HITL
+2. harness-runner   → código + testes unitários
 3. robot-test-generator → testes E2E/integração
-4. code-reviewer   → revisão + sync de flows
+4. code-reviewer    → revisão + sync de flows
 5. PR aberto
 ```
 
@@ -65,6 +67,7 @@ Registre o serviço em `workspace/domain-map.yml`.
 .github/                    # Instruções globais do Copilot
 agents/                     # Custom agents (spec-writer, harness-runner, etc.)
 skills/                     # Skills atômicas reutilizáveis pelos agentes
+  ├── domain/               # Extração de modelo de domínio (domain-extractor)
   ├── sdd/                  # Geração e validação de specs
   ├── harness/              # Scaffolding e geração de código
   ├── review/               # Qualidade e drift detection
