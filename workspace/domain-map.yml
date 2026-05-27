@@ -1,0 +1,47 @@
+# Domain Map — Plataforma Distributed Services
+# Fonte de verdade para o toolkit: lista de serviços, bounded contexts e localização dos repos
+
+version: "1.0"
+
+bounded_contexts:
+
+  - name: registro
+    description: Contexto responsável pelo registro e validação de duplicatas mercantis
+    services:
+      - name: registro-duplicatas
+        repo: git@github.com:{org}/registro-duplicatas.git
+        language: java
+        framework: quarkus
+        flows: flows/services/registro-duplicatas/
+        openapi: flows/services/registro-duplicatas/openapi.yml
+        kafka:
+          topics_consumed:
+            - name: duplicatas.solicitacao-registro
+              schema: flows/services/registro-duplicatas/schemas/solicitacao-registro.json
+          topics_published:
+            - name: duplicatas.registrada
+              schema: flows/services/registro-duplicatas/schemas/duplicata-registrada.json
+        toolkit_config: .copilot-toolkit.yml
+
+  - name: escrituracao
+    description: Contexto responsável pela escrituração e ciclo de vida das duplicatas
+    services:
+      - name: escrituracao-duplicatas
+        repo: git@github.com:{org}/escrituracao-duplicatas.git
+        language: java
+        framework: quarkus
+        flows: flows/services/escrituracao-duplicatas/
+        openapi: flows/services/escrituracao-duplicatas/openapi.yml
+        kafka:
+          topics_consumed:
+            - name: duplicatas.registrada
+              schema: flows/services/escrituracao-duplicatas/schemas/duplicata-registrada.json
+          topics_published:
+            - name: duplicatas.escriturada
+              schema: flows/services/escrituracao-duplicatas/schemas/duplicata-escriturada.json
+        toolkit_config: .copilot-toolkit.yml
+
+# Como adicionar um novo serviço:
+# 1. Adicione a entrada neste arquivo no bounded context correto
+# 2. Crie o diretório flows/services/{service-name}/ com overview.md e _template de flow
+# 3. Adicione .copilot-toolkit.yml na raiz do repo do serviço referenciando este toolkit

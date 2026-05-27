@@ -1,0 +1,24 @@
+name: pre-push
+description: Lembrete e validação leve antes do push para remoto
+trigger: pre-push
+
+steps:
+  - name: Verificar revisão pre-PR
+    type: reminder
+    message: |
+      ⚠️  Lembrete: você executou o agente code-reviewer neste branch?
+
+      O code-reviewer verifica:
+        ✓ Qualidade de código e arquitetura hexagonal
+        ✓ Drift entre implementação e specs documentadas
+        ✓ Atualização dos flows em flows/services/
+
+      Para executar: gh copilot agent code-reviewer
+
+      Pressione Enter para continuar o push ou Ctrl+C para cancelar e revisar.
+    require_acknowledgment: true
+
+  - name: Verificar .copilot-toolkit.yml no repo de destino
+    type: check
+    description: Valida que o serviço possui referência ao toolkit configurada
+    optional: true
