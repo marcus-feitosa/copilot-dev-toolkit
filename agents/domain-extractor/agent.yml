@@ -66,6 +66,7 @@ instructions: |
   9. `{SOURCE_PATH}/src/main/java/**/infrastructure/in/messaging/**` — Kafka consumers
   10. `{SOURCE_PATH}/src/main/java/**/infrastructure/out/messaging/**` — Kafka producers
   11. `{SOURCE_PATH}/src/main/java/**/infrastructure/out/persistence/**` — adapters de persistência
+  Ps: Nem sempre os projetos seguem essa estrutura, adapte a leitura conforme necessário, mas priorize ler os arquivos listados acima para entender o domínio antes de ler outros arquivos (ex: adapters de persistência).
 
   ---
 
