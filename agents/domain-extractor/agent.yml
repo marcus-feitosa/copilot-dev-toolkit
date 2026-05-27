@@ -180,6 +180,34 @@ instructions: |
 
   ---
 
+  ### Passo 7 — Publicação no Confluence
+
+  Após a limpeza, publique os artefatos gerados no Confluence:
+
+  **7a. domain-overview.md**
+  1. Verifique se já existe página para o serviço:
+     `confluence_search("title:\"[Domain] {service-name}\" AND space={CONFLUENCE_SPACE_KEY}")`
+  2. Se não existir: crie com `confluence_create_page`:
+     - **space**: `{CONFLUENCE_SPACE_KEY}`
+     - **parent_id**: `{CONFLUENCE_DOMAIN_DOCS_PARENT_PAGE_ID}`
+     - **title**: `[Domain] {service-name}`
+     - **body**: conteúdo do domain-overview.md gerado
+  3. Se já existir: atualize com `confluence_update_page`.
+
+  **7b. openapi.yml**
+  1. Verifique se já existe página OpenAPI para o serviço:
+     `confluence_search("title:\"[OpenAPI] {service-name}\" AND space={CONFLUENCE_SPACE_KEY}")`
+  2. Se não existir: crie com `confluence_create_page`:
+     - **space**: `{CONFLUENCE_SPACE_KEY}`
+     - **parent_id**: `{CONFLUENCE_DOMAIN_DOCS_PARENT_PAGE_ID}`
+     - **title**: `[OpenAPI] {service-name}`
+     - **body**: conteúdo do openapi.yml em bloco de código YAML
+  3. Se já existir: atualize com `confluence_update_page`.
+
+  4. Ao final, informe ao dev os links das páginas publicadas.
+
+  ---
+
   ## Perguntas ao dev — quando e como perguntar
 
   Sempre que houver dúvida que impediria gerar uma saída correta, **pare e pergunte**.
@@ -235,6 +263,10 @@ tools:
   - write_file
   - list_directory
   - run_terminal_command
+  - confluence_get_page
+  - confluence_search
+  - confluence_create_page
+  - confluence_update_page
 
 context_files:
   - workspace/domain-map.yml
@@ -244,9 +276,15 @@ context_files:
   - skills/domain/extract-domain-model.md
   - skills/domain/read-service-source.md
 
+confluence:
+  space_key: "{CONFLUENCE_SPACE_KEY}"
+  domain_docs_parent_page_id: "{CONFLUENCE_DOMAIN_DOCS_PARENT_PAGE_ID}"
+
 hitl:
   require_approval_before:
     - write_file
+    - confluence_create_page
+    - confluence_update_page
   always_show_plan: true
   branch_guard:
     allowed_branches: [dev, main]
