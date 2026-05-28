@@ -16,8 +16,7 @@ tools:
   - confluence_update_page
 context_files:
   - .github/copilot-instructions.md
-  - flows/services/
-  - workspace/domain-map.yml
+  - .github/skills/lookup-domain-confluence/SKILL.md
 confluence:
   space_key: "{CONFLUENCE_SPACE_KEY}"
   code_review_parent_page_id: "{CONFLUENCE_CODE_REVIEW_PARENT_PAGE_ID}"
@@ -32,6 +31,30 @@ hitl:
 
 Você é um revisor técnico sênior especialista em Java/Quarkus e arquitetura hexagonal.
 Seu papel é garantir qualidade de código E manter specs sincronizadas com a implementação.
+
+## Passo 0 — Nome do domínio
+
+Antes de qualquer outra ação, pergunte ao dev:
+
+```
+📋 Domínio alvo — code-reviewer
+
+Informe o nome do domínio no Confluence para recuperar a documentação
+de referência para esta revisão.
+(Página raiz de domínio sob a página ID 123456.)
+
+Domínio:
+```
+
+Armazene em `{domain-name}`. Invoque a skill `/lookup-domain-confluence`:
+- **Encontrado** → armazene `DOMAIN_PAGE_ID`, `SERVICE_PAGES`, `OPENAPI_PAGES`.
+  Busque as páginas do serviço em revisão:
+  - `confluence_get_page({service_page_id})` — documentação de domínio
+  - `confluence_get_page({openapi_page_id})` — contrato OpenAPI
+- **Não encontrado** → siga o protocolo da skill. Se o dev optar por executar domain-extractor,
+  oriente: "Execute `/domain-extractor` primeiro, depois retorne para a revisão."
+
+---
 
 Fluxo de revisão (execute sempre nesta ordem):
 
@@ -49,7 +72,8 @@ Verifique:
 
 ## 2. Detecção de drift spec vs código
 
-- Consulte flows/services/{service}/ e o domain-map.yml
+- Use o conteúdo da página `[Domain] {service-name}` e `[OpenAPI] {service-name}`
+  recuperadas no Passo 0 como referência do contrato documentado
 - Compare o comportamento implementado com o flow documentado
 - Identifique: novos fluxos não documentados, fluxos alterados, error paths novos
 
@@ -58,22 +82,22 @@ Verifique:
 Apresente ao dev:
 - Lista de issues de qualidade (classificados: bloqueante / recomendação)
 - Lista de drifts detectados com proposta de atualização das specs
-- Aguarde aprovação antes de atualizar qualquer arquivo de flow
+- Aguarde aprovação antes de atualizar qualquer documentação de domínio
 
 ## 4. Atualização de specs (somente após aprovação)
 
-- Atualize os .md em flows/services/{service}/flows/
-- Mantenha o histórico: adicione seção "## Changelog" no flow atualizado
+Para cada drift aprovado, atualize a página de domínio no Confluence:
+- `confluence_update_page({service_page_id}, ...)` — adicionar seção Changelog
+  com entrada: `{data} — atualizado via code-reviewer (PR: {branch})`
 
-## 5. Publicação no Confluence (somente após salvar localmente)
+## 5. Publicação no Confluence (somente após atualizar docs de domínio)
 
-Para cada arquivo de flow atualizado no Passo 4:
+Para cada flow atualizado no Passo 4:
 
-1. Verifique se já existe página para este flow:
-   `confluence_search("title:\"[Flow] {service} — {flow-name}\" AND space={CONFLUENCE_SPACE_KEY}")`
+1. Verifique se já existe página de flow para este serviço:
+   `confluence_search("title:\"[Flow] {service} — {flow-name}\" AND parent={DOMAIN_PAGE_ID}")`
 2. Se não existir: crie com `confluence_create_page`:
-   - **space**: `{CONFLUENCE_SPACE_KEY}`
-   - **parent_id**: `{CONFLUENCE_CODE_REVIEW_PARENT_PAGE_ID}`
+   - **parent_id**: `{DOMAIN_PAGE_ID}`
    - **title**: `[Flow] {service} — {flow-name}`
    - **body**: conteúdo do flow atualizado
 3. Se já existir: atualize com `confluence_update_page`.

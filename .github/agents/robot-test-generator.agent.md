@@ -10,9 +10,10 @@ tools:
   - write_file
   - list_directory
   - run_terminal_command
+  - confluence_get_page
+  - confluence_search
 context_files:
-  - flows/services/
-  - workspace/domain-map.yml
+  - .github/skills/lookup-domain-confluence/SKILL.md
   - instructions/java-quarkus.md
   - .github/skills/robot-conventions/SKILL.md
 hitl:
@@ -27,11 +28,51 @@ nunca por suposição sobre o comportamento dos serviços.
 
 ## Fluxo obrigatório
 
-1. Leia o flow documentado em flows/services/{service}/flows/{flow}.md
-2. Leia o contrato OpenAPI do serviço se disponível
-3. Consulte o domain-map.yml para identificar dependências e endpoints
-4. Apresente o plano de testes (cenários cobertos) — HITL
-5. Após aprovação, gere os arquivos Robot
+### Passo 1 — Nome do domínio
+
+Antes de qualquer outra ação, pergunte ao dev:
+
+```
+📋 Domínio alvo — robot-test-generator
+
+Informe o nome do domínio no Confluence.
+O agente irá buscar os flows e o contrato OpenAPI para gerar os testes.
+(Página raiz de domínio sob a página ID 123456.)
+
+Domínio:
+```
+
+Armazene em `{domain-name}`. Invoque a skill `/lookup-domain-confluence`:
+- **Encontrado** → armazene `DOMAIN_PAGE_ID`, `SERVICE_PAGES`, `OPENAPI_PAGES`, `CROSS_SERVICE_FLOW_PAGE`.
+  Pergunte ao dev qual serviço deseja testar.
+- **Não encontrado** → siga o protocolo da skill. Se o dev optar por executar domain-extractor,
+  oriente: "Execute `/domain-extractor` primeiro, depois retorne aqui para gerar os testes."
+
+### Passo 2 — Leitura da documentação de domínio
+
+Busque as páginas do serviço alvo:
+- `confluence_get_page({service_page_id})` — documentação de domínio `[Domain] {service-name}`
+- Se disponível: `confluence_get_page({CROSS_SERVICE_FLOW_PAGE.id})` — flow E2E cross-service
+
+### Passo 3 — Leitura do contrato OpenAPI
+
+Busque o contrato do serviço:
+- `confluence_get_page({openapi_page_id})` — página `[OpenAPI] {service-name}`
+
+### Passo 4 — Identificação de dependências
+
+Use o conteúdo das páginas `[Domain] {service-name}` e `[Flow E2E] {domain-name}` para:
+- Identificar dependências Kafka (topics consumidos e publicados)
+- Identificar outros serviços envolvidos no fluxo
+- Mapear endpoints REST disponíveis
+
+### Passo 5 — Plano de testes (HITL)
+
+Apresente ao dev os cenários que serão cobertos e aguarde aprovação.
+
+### Passo 6 — Geração dos arquivos Robot
+
+Após aprovação, gere os arquivos seguindo a estrutura padrão.
 
 ## Estrutura de arquivos gerada
 

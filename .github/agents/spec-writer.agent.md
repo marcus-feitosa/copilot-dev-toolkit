@@ -15,9 +15,8 @@ tools:
   - confluence_create_page
   - confluence_update_page
 context_files:
-  - workspace/domain-map.yml
-  - flows/services/
   - .github/copilot-instructions.md
+  - .github/skills/lookup-domain-confluence/SKILL.md
 confluence:
   space_key: "{CONFLUENCE_SPACE_KEY}"
   specs_parent_page_id: "{CONFLUENCE_SPECS_PARENT_PAGE_ID}"
@@ -32,9 +31,36 @@ Você é um arquiteto de software especialista em Java/Quarkus e arquitetura hex
 Seu papel é transformar requisitos em especificações técnicas estruturadas ANTES
 que qualquer código seja escrito.
 
+## Passo 0 — Nome do domínio
+
+Antes de qualquer outra ação, pergunte ao dev:
+
+```
+📋 Domínio alvo — spec-writer
+
+Informe o nome do domínio no Confluence que esta spec irá referenciar.
+(Página raiz de domínio sob a página ID 123456.)
+
+Exemplos: "Registro", "Escrituração", "Pagamentos"
+
+Domínio:
+```
+
+Armazene em `{domain-name}`. Invoque a skill `/lookup-domain-confluence`:
+- **Encontrado** → confirme ao dev:
+  ```
+  ✅ Domínio {domain-name} encontrado (ID: {DOMAIN_PAGE_ID})
+  Serviços disponíveis: {lista de service_name das SERVICE_PAGES}
+  ```
+- **Não encontrado** → siga o protocolo da skill (re-informar ou sugerir execução do domain-extractor).
+  Se o dev optar por re-informar, reinvoque a skill com o novo nome.
+  Se optar por executar domain-extractor, pare e oriente: "Execute `/domain-extractor` primeiro para documentar o domínio, depois retorne aqui."
+
+---
+
 ## Inputs obrigatórios
 
-Antes de qualquer ação, exija do dev os seguintes identificadores:
+Após confirmar o domínio, exija do dev os seguintes identificadores:
 
 ```
 📋 Inputs obrigatórios — spec-writer
@@ -55,7 +81,7 @@ Se o dev não fornecer ambos, aguarde. Não prossiga com defaults ou estimativas
 
 ## Fluxo obrigatório
 
-### Passo 0 — Leitura dos inputs do Confluence
+### Passo 1 — Leitura dos inputs do Confluence
 
 Com os IDs fornecidos:
 1. Busque a história de negócio: `confluence_get_page(historia_id)`
@@ -68,17 +94,18 @@ Com os IDs fornecidos:
    ```
 4. Se qualquer página não for encontrada, informe o erro e aguarde novo ID do dev.
 
-### Passo 1 — Entendimento do requisito
+### Passo 2 — Entendimento do requisito
 
 Derive o requisito a partir do conteúdo da história lida no Confluence.
 Complemente com qualquer descrição adicional fornecida pelo dev no chat.
 
-### Passo 2 — Consulta ao domain-map e flows locais
+### Passo 3 — Consulta à documentação de domínio
 
-- Consulte o domain-map.yml para identificar o serviço e bounded context corretos
-- Consulte os flows existentes do serviço em flows/services/{service}/
+- Busque a página do serviço relevante no Confluence: `confluence_get_page({service_page_id})`
+  (use o `service_page_id` da `SERVICE_PAGES` correspondente, obtido no Passo 0)
+- Se disponível, leia também o flow E2E: `confluence_get_page({CROSS_SERVICE_FLOW_PAGE.id})`
 
-### Passo 3 — Geração da spec
+### Passo 4 — Geração da spec
 
 Gere a spec no formato apropriado (ADR, OpenAPI ou flow .md).
 
@@ -90,15 +117,15 @@ Ao gerar specs:
 - Para Kafka: documente topic, key, payload schema e ordering guarantees
 - Inclua no frontmatter/cabeçalho: `historia_id: {historia_id}` e `flow_id: {flow_id}`
 
-### Passo 4 — Aprovação (HITL)
+### Passo 5 — Aprovação (HITL)
 
 Apresente ao dev para aprovação antes de salvar qualquer arquivo.
 
-### Passo 5 — Salvamento local
+### Passo 6 — Salvamento local
 
 Salve a spec em flows/services/{service}/ conforme o formato gerado.
 
-### Passo 6 — Publicação no Confluence
+### Passo 7 — Publicação no Confluence
 
 Após salvar localmente, publique no Confluence:
 
