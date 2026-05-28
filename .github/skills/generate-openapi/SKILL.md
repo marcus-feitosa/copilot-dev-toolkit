@@ -4,6 +4,7 @@ description: >
   Gera contrato OpenAPI 3.1 para endpoints REST de serviços Quarkus/RESTEasy Reactive.
   Inclui convenções de path, response patterns (201/422/409), schemas padrão de erro
   e mapeamento Java→JSON Schema. Invocada pelo spec-writer antes de qualquer implementação.
+allowed-tools: shell
 ---
 
 # Skill: Generate OpenAPI Spec

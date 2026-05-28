@@ -5,6 +5,7 @@ description: >
   implementado. Classifica drifts em bloqueantes, recomendações e informativos.
   Invocada pelo code-reviewer durante revisão pre-PR ou ao suspeitar que o código
   evoluiu sem atualização de spec.
+allowed-tools: shell
 ---
 
 # Skill: Validate Spec vs Implementation

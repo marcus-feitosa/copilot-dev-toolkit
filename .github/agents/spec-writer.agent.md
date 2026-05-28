@@ -9,6 +9,7 @@ tools:
   - read_file
   - write_file
   - list_directory
+  - run_terminal_command
   - confluence_get_page
   - confluence_search
   - confluence_create_page

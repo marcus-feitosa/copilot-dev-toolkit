@@ -4,6 +4,7 @@ description: >
   Detecta divergências entre a implementação atual e as specs documentadas nos flows.
   Classifica drifts em bloqueantes (código sem spec), recomendações (spec desatualizada)
   e informativos. Invocada pelo code-reviewer durante revisão pre-PR.
+allowed-tools: shell
 ---
 
 # Skill: Spec Drift Detector

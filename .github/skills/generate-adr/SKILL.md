@@ -4,6 +4,7 @@ description: >
   Gera um Architecture Decision Record (ADR) estruturado a partir de uma decisão técnica.
   Verifica ADRs existentes para evitar duplicidade e salva em flows/services/{service}/adr/
   após aprovação HITL. Use antes de adotar novos padrões arquiteturais ou dependências.
+allowed-tools: shell
 ---
 
 # Skill: Generate ADR

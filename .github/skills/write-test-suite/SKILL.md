@@ -4,6 +4,7 @@ description: >
   Gera testes unitários e de integração para componentes Java/Quarkus seguindo
   a estrutura hexagonal. Cobre camadas domain (JUnit puro), application (Mockito)
   e infrastructure (QuarkusTest + REST Assured / Kafka). Invoque via harness-runner.
+allowed-tools: shell
 ---
 
 # Skill: Write Test Suite (JUnit/Quarkus)

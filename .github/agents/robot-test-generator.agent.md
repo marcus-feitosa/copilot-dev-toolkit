@@ -9,6 +9,7 @@ tools:
   - read_file
   - write_file
   - list_directory
+  - run_terminal_command
 context_files:
   - flows/services/
   - workspace/domain-map.yml

@@ -4,6 +4,7 @@ description: >
   Gera a estrutura inicial de um novo microserviço Java/Quarkus com arquitetura hexagonal:
   pacotes domain/application/infrastructure, pom.xml, application.properties,
   Dockerfile.jvm e .copilot-toolkit.yml. Invoque ao criar um serviço do zero.
+allowed-tools: shell
 ---
 
 # Skill: Scaffold Service

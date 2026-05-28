@@ -5,6 +5,7 @@ description: >
   que qualquer ação seja tomada. Lista ações planejadas, arquivos afetados,
   pré-condições verificadas e o que está fora do escopo. Invocada por todos os agentes
   com always_show_plan.
+allowed-tools: shell
 ---
 
 # Skill: Summarize Plan

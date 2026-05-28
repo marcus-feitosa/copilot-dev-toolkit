@@ -4,6 +4,7 @@ description: >
   Padrões Robot Framework para testar fluxos assíncronos com Kafka em serviços Quarkus.
   Cobre os padrões Publish→Poll→Assert, Idempotência e Error Path com Retry Kafka,
   com timeouts recomendados por cenário. Invocada pelo robot-test-generator.
+allowed-tools: shell
 ---
 
 # Skill: Robot Framework — Padrões para Fluxos Assíncronos (Kafka)

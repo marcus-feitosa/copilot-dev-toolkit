@@ -4,6 +4,7 @@ description: >
   Propõe e aplica atualizações nos flows documentados a partir de drifts detectados.
   Apresenta diff antes/depois para aprovação HITL e nunca sobrescreve sem confirmação.
   Preserva histórico via seção Changelog. Invocada pelo code-reviewer pós-aprovação.
+allowed-tools: shell
 ---
 
 # Skill: Spec Updater

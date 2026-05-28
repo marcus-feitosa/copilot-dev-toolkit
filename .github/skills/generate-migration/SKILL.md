@@ -5,6 +5,7 @@ description: >
   Aplica versionamento correto, padrões de segurança (IF EXISTS, CONCURRENTLY)
   e checklists HITL obrigatórios antes de qualquer escrita. Use ao criar ou
   alterar schemas em serviços Java/Quarkus.
+allowed-tools: shell
 ---
 
 # Skill: Generate Migration

@@ -6,6 +6,7 @@ description: >
   diretamente ou chamado por outros agentes em pontos críticos.
 tools:
   - read_file
+  - run_terminal_command
 hitl:
   is_gate: true
   require_explicit_confirmation: true
