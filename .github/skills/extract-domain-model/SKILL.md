@@ -1,3 +1,12 @@
+---
+name: extract-domain-model
+description: >
+  Guia a leitura de código-fonte Java/Quarkus e a extração dos elementos do modelo de
+  domínio (entidades, value objects, ports, use cases, eventos Kafka, endpoints REST)
+  necessários para gerar domain-overview.md e openapi.yml. Invoque esta skill durante
+  a fase de análise de qualquer serviço com arquitetura hexagonal.
+---
+
 # Skill: Extract Domain Model
 
 ## Objetivo
@@ -307,7 +316,7 @@ antes de continuar. Não assuma, não pule, não marque como TODO se a resposta 
 
 | Situação | O que perguntar |
 |----------|----------------|
-| Record que parece entidade (tem campo `id` mas é `record`) | "O tipo `{Nome}` é um record com campo `id`. É uma entidade ou um value object de ID? |
+| Record que parece entidade (tem campo `id` mas é `record`) | "O tipo `{Nome}` é um record com campo `id`. É uma entidade ou um value object de ID?" |
 | Interface em `port/in` com mais de um método | "A port `{NomePort}` tem {n} métodos. Qual é o método principal / operação primária?" |
 | Classe em `usecase/` que não implementa nenhuma interface | "O use case `{NomeUseCase}` não implementa uma port. Existe uma port correspondente que não encontrei, ou este use case é uma exceção ao padrão?" |
 | Topic Kafka sem correspondência no `application.properties` | "O canal `{canal}` não tem topic mapeado no application.properties. Qual é o nome real do topic?" |

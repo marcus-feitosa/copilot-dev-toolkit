@@ -17,9 +17,15 @@ git clone git@github.com:{org}/copilot-dev-toolkit.git
 cd copilot-dev-toolkit
 ```
 
+Os agentes e skills são carregados automaticamente pelo Copilot CLI a partir de `.github/agents/`
+e `.github/skills/`. Use `/skills list` para verificar as skills disponíveis e `/agent` para
+selecionar um agente interativamente.
+
 ---
 
 ## Agentes disponíveis
+
+Agentes em `.github/agents/` — invoque com `/agent` ou `--agent {nome}`:
 
 | Agente | Propósito | Quando usar |
 |--------|-----------|-------------|
@@ -29,6 +35,13 @@ cd copilot-dev-toolkit
 | `robot-test-generator` | Testes Robot Framework | Após implementação |
 | `code-reviewer` | Qualidade + sync de specs | Antes de abrir PR |
 | `hitl-gate` | Checkpoint de aprovação | Invocado automaticamente por outros agentes |
+
+```bash
+# Exemplos de uso via CLI
+copilot --agent domain-extractor --prompt "Extraia o domínio de git@github.com:org/meu-servico.git"
+copilot --agent spec-writer --prompt "Gere spec para historia_id=123 flow_id=456"
+copilot --agent code-reviewer --prompt "Revise o PR da branch feature/minha-feature"
+```
 
 ---
 
@@ -64,25 +77,31 @@ Registre o serviço em `workspace/domain-map.yml`.
 ## Estrutura do repositório
 
 ```
-.github/                    # Instruções globais do Copilot
-agents/                     # Custom agents (spec-writer, harness-runner, etc.)
-skills/                     # Skills atômicas reutilizáveis pelos agentes
-  ├── domain/               # Extração de modelo de domínio (domain-extractor)
-  ├── sdd/                  # Geração e validação de specs
-  ├── harness/              # Scaffolding e geração de código
-  ├── review/               # Qualidade e drift detection
-  ├── robot/                # Convenções Robot Framework
-  └── hitl/                 # Checkpoints de aprovação
-hooks/                      # Hooks do Copilot CLI (pre-push)
-prompts/                    # Prompts reutilizáveis por domínio
-instructions/               # Custom instructions por stack/squad
-flows/                      # Fonte de verdade dos fluxos do domínio
+.github/
+  ├── copilot-instructions.md     # Instruções globais do Copilot (stack, princípios, HITL)
+  ├── agents/                     # Custom agents — formato oficial .agent.md
+  │   ├── domain-extractor.agent.md
+  │   ├── spec-writer.agent.md
+  │   └── code-reviewer.agent.md
+  └── skills/                     # Skills atômicas — formato oficial SKILL.md
+      ├── domain/
+      │   ├── read-service-source/SKILL.md
+      │   └── extract-domain-model/SKILL.md
+      ├── sdd/                    # Geração e validação de specs
+      ├── harness/                # Scaffolding e geração de código
+      ├── review/                 # Qualidade e drift detection
+      ├── robot/                  # Convenções Robot Framework
+      └── hitl/                   # Checkpoints de aprovação
+hooks/                            # Hooks do Copilot CLI (pre-push)
+prompts/                          # Prompts reutilizáveis por domínio
+instructions/                     # Custom instructions por stack/squad
+flows/                            # Fonte de verdade dos fluxos do domínio
   └── services/
-      ├── _template/        # Templates de flow e ADR
-      └── {service}/        # Flows por serviço
+      ├── _template/              # Templates de flow e ADR
+      └── {service}/              # Flows por serviço
 workspace/
-  └── domain-map.yml        # Registro de serviços e bounded contexts
-docs/                       # Documentação do toolkit
+  └── domain-map.yml              # Registro de serviços e bounded contexts
+docs/                             # Documentação do toolkit
 ```
 
 ---
