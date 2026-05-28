@@ -99,17 +99,52 @@ Com os IDs fornecidos:
 Derive o requisito a partir do conteúdo da história lida no Confluence.
 Complemente com qualquer descrição adicional fornecida pelo dev no chat.
 
+### Passo 2.5 — Avaliação de ambiguidades
+
+Antes de gerar qualquer spec, avalie o conteúdo recuperado da história e do flow.
+Liste explicitamente:
+- O que está claro e pode ser especificado com confiança
+- O que está ambíguo, incompleto ou ausente
+
+Se houver qualquer item ambíguo, **não prossiga**. Apresente ao dev:
+
+```
+❓ Preciso de esclarecimentos antes de gerar a spec:
+
+[Lista numerada de perguntas específicas]
+
+Responda todas antes de continuar.
+```
+
+Só avance ao Passo 3 após receber respostas claras para todas as perguntas.
+Se tudo estiver claro, confirme:
+
+```
+✅ Requisitos suficientemente claros. Prosseguindo para consulta de domínio.
+```
+
 ### Passo 3 — Consulta à documentação de domínio
+
+> **Regra de leitura de arquivos locais:** Antes de ler qualquer arquivo local
+> (templates, código-fonte, specs existentes), informe ao dev o que você pretende
+> ler e por quê, e aguarde confirmação explícita:
+>
+> ```
+> 📂 Preciso ler o arquivo `{path}` para {motivo}.
+> Posso prosseguir? (sim / não)
+> ```
+>
+> Silêncio não é aprovação. Aguarde resposta antes de invocar `read_file`.
 
 - Busque a página do serviço relevante no Confluence: `confluence_get_page({service_page_id})`
   (use o `service_page_id` da `SERVICE_PAGES` correspondente, obtido no Passo 0)
 - Se disponível, leia também o flow E2E: `confluence_get_page({CROSS_SERVICE_FLOW_PAGE.id})`
 
-### Passo 4 — Geração da spec
+### Passo 4 — Geração e refinamento iterativo da spec
 
-Gere a spec no formato apropriado (ADR, OpenAPI ou flow .md).
+#### 4.1 — Gere o rascunho inicial
 
-Ao gerar specs:
+Gere a spec no formato apropriado (ADR, OpenAPI 3.1 ou flow .md):
 - ADRs seguem o template em flows/services/_template/adr.md
 - Flows seguem o template em flows/services/_template/flow.md
 - OpenAPI segue OpenAPI 3.1, com exemplos realistas
@@ -117,9 +152,72 @@ Ao gerar specs:
 - Para Kafka: documente topic, key, payload schema e ordering guarantees
 - Inclua no frontmatter/cabeçalho: `historia_id: {historia_id}` e `flow_id: {flow_id}`
 
-### Passo 5 — Aprovação (HITL)
+#### 4.2 — Checklist de completude para harness-runner
 
-Apresente ao dev para aprovação antes de salvar qualquer arquivo.
+Após gerar o rascunho, avalie cada item abaixo. Marque ✅ se atendido, ❌ se ausente:
+
+**Para specs OpenAPI:**
+- [ ] Todos os endpoints estão definidos com path, method e summary
+- [ ] Cada endpoint tem request body schema (se aplicável)
+- [ ] Cada endpoint tem respostas para: sucesso, validação (422), conflito (409), erro interno (500)
+- [ ] Todos os schemas referenciados estão definidos em `components/schemas`
+- [ ] Há exemplos realistas nos schemas (não apenas tipos genéricos)
+- [ ] `historia_id` e `flow_id` estão no cabeçalho/frontmatter
+- [ ] O nome do serviço é consistente com `SERVICE_PAGES` do domínio
+
+**Para specs de Flow:**
+- [ ] Happy path documentado com todos os atores e passos
+- [ ] Pelo menos EP-01 (erro de validação) documentado
+- [ ] Contratos (REST/Kafka) referenciados com topic/schema
+- [ ] `historia_id` e `flow_id` estão no frontmatter
+
+**Para ADRs:**
+- [ ] Contexto e problema claramente descritos
+- [ ] Decisão explícita (não apenas análise)
+- [ ] Pelo menos 2 alternativas consideradas com trade-offs
+- [ ] Consequências (positivas e negativas) listadas
+
+#### 4.3 — Apresente draft + checklist e pergunte
+
+Apresente ao dev:
+
+```
+📄 Rascunho da spec — {nome da spec}
+
+{conteúdo completo da spec gerada}
+
+---
+📋 Checklist de completude (harness-runner):
+
+{checklist com itens marcados ✅ ou ❌}
+
+Itens ❌ que faltam: {lista dos itens não atendidos, ou "nenhum"}
+
+---
+A spec está completa para implementação?
+- sim             → prosseguir para aprovação final
+- refinar {seção} → detalhe o que precisa mudar e eu ajusto
+- adicionar {X}   → descreva o que falta e incorporo
+```
+
+#### 4.4 — Loop de refinamento
+
+Se o dev solicitar refinamento:
+1. Aplique os ajustes descritos pelo dev
+2. Volte ao Passo 4.2 (execute o checklist novamente)
+3. Apresente o diff das mudanças + checklist atualizado
+4. Repita até o dev confirmar "sim" e todos os itens do checklist estarem ✅
+
+Não avance ao Passo 5 enquanto houver itens ❌ no checklist ou o dev não confirmar.
+
+### Passo 5 — Aprovação final (HITL)
+
+Apresente a spec final completa para aprovação antes de salvar qualquer arquivo.
+
+> **Pré-condição:** O checklist do Passo 4.2 deve estar 100% ✅ antes desta etapa.
+> Se houver qualquer ❌, retorne ao Passo 4.3.
+
+A aprovação aqui autoriza **tanto o salvamento local quanto a publicação no Confluence**.
 
 ### Passo 6 — Salvamento local
 

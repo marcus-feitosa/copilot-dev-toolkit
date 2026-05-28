@@ -114,11 +114,13 @@ selecionar um agente interativamente.
 **O que o agente vai fazer (com HITL):**
 1. Consulta o domínio no Confluence via `lookup-domain-confluence`
 2. Lê a história de negócio e o flow de referência
-3. Gera spec (ADR, OpenAPI ou flow .md conforme contexto)
-4. Apresenta para aprovação antes de salvar
-5. Salva localmente em `flows/services/{service}/` e publica no Confluence
+3. Avalia ambiguidades — pergunta ao dev antes de prosseguir se algum requisito não estiver claro
+4. Solicita permissão explícita antes de ler qualquer arquivo local (templates, código-fonte)
+5. Gera spec (ADR, OpenAPI 3.1 ou flow .md conforme contexto) com checklist de completude para `harness-runner`
+6. Refina iterativamente com o dev até todos os itens do checklist estarem ✅
+7. Salva localmente em `flows/services/{service}/` e publica no Confluence
 
-**Checkpoints HITL:** aprovação da spec gerada antes de qualquer escrita
+**Checkpoints HITL:** esclarecimento de ambiguidades → permissão de leitura de arquivos locais → refinamento iterativo da spec → aprovação final antes de qualquer escrita
 
 ---
 
