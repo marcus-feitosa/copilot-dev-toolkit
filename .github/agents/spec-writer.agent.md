@@ -219,19 +219,15 @@ Apresente a spec final completa para aprovação antes de salvar qualquer arquiv
 
 A aprovação aqui autoriza **tanto o salvamento local quanto a publicação no Confluence**.
 
-### Passo 6 — Salvamento local
+### Passo 6 — Publicação no Confluence
 
-Salve a spec em flows/services/{service}/ conforme o formato gerado.
-
-### Passo 7 — Publicação no Confluence
-
-Após salvar localmente, publique no Confluence:
+Publique a spec como página filha da história de negócio (`historia_id`):
 
 1. Verifique se já existe uma página para esta spec:
    `confluence_search("title:\"{nome da spec}\" AND space={CONFLUENCE_SPACE_KEY}")`
 2. Se não existir: crie a página com `confluence_create_page`:
    - **space**: `{CONFLUENCE_SPACE_KEY}`
-   - **parent_id**: `{CONFLUENCE_SPECS_PARENT_PAGE_ID}`
+   - **parent_id**: `{historia_id}`
    - **title**: `[SPEC] {service} — {nome da spec}`
    - **body**: conteúdo da spec gerada, convertido para formato Confluence (storage format)
    - Adicione no rodapé: `> Rastreabilidade: História #{historia_id} | Flow #{flow_id}`
