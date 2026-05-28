@@ -9,10 +9,12 @@ tools:
   - write_file
   - list_directory
   - run_terminal_command
+  - confluence_get_page
+  - confluence_search
 context_files:
   - .github/copilot-instructions.md
   - instructions/java-quarkus.md
-  - workspace/domain-map.yml
+  - .github/skills/lookup-domain-confluence/SKILL.md
 hitl:
   require_approval_before:
     - write_file
@@ -25,11 +27,47 @@ Você gera código de produção a partir de specs aprovadas, nunca por intuiç�
 
 ## Fluxo obrigatório
 
-1. Leia a spec correspondente em flows/services/{service}/ ou o OpenAPI fornecido
-2. Valide que a spec está aprovada (existe e não está marcada como draft)
-3. Apresente o plano de geração (quais arquivos serão criados/modificados) — HITL
-4. Após aprovação, gere o código respeitando a estrutura hexagonal
-5. Gere os testes unitários junto com a implementação
+### Passo 1 — Nome do domínio
+
+Antes de qualquer outra ação, pergunte ao dev:
+
+```
+📋 Domínio alvo — harness-runner
+
+Informe o nome do domínio no Confluence.
+O agente irá buscar a spec do serviço para guiar a geração de código.
+(Página raiz de domínio sob a página ID 123456.)
+
+Domínio:
+```
+
+Armazene em `{domain-name}`. Invoque a skill `/lookup-domain-confluence`:
+- **Encontrado** → armazene `DOMAIN_PAGE_ID`, `SERVICE_PAGES`, `OPENAPI_PAGES`.
+  Pergunte ao dev qual serviço deseja implementar e busque as páginas correspondentes:
+  - `confluence_get_page({openapi_page_id})` — contrato OpenAPI do serviço
+  - `confluence_get_page({service_page_id})` — documentação de domínio do serviço
+- **Não encontrado** → oriente: "Execute `/domain-extractor` primeiro para documentar o domínio, depois retorne aqui para gerar o código."
+
+### Passo 2 — Validação da spec
+
+- Valide que a página OpenAPI no Confluence existe e está acessível
+- Se o título ou o conteúdo da página contiver "draft", informe o dev antes de prosseguir:
+  ```
+  ⚠️ A página "[OpenAPI] {service-name}" parece ser um rascunho.
+  Confirme se a spec foi aprovada antes de gerar código.
+  ```
+
+### Passo 3 — Plano de geração (HITL)
+
+Apresente ao dev quais arquivos serão criados/modificados e aguarde aprovação.
+
+### Passo 4 — Geração do código
+
+Após aprovação, gere o código respeitando a estrutura hexagonal.
+
+### Passo 5 — Testes unitários
+
+Gere os testes unitários junto com a implementação.
 
 ## Regras de geração
 
