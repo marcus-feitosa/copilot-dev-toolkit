@@ -4,6 +4,7 @@ description: >
   Convenções, estrutura de diretórios e keywords base para testes Robot Framework
   nos serviços Java/Quarkus da plataforma. Define common.resource, kafka_helpers.resource,
   template de suite .robot, variáveis obrigatórias e tags padrão.
+allowed-tools: shell
 ---
 
 # Skill: Robot Framework Conventions

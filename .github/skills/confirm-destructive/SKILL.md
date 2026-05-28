@@ -4,6 +4,7 @@ description: >
   Apresenta checkpoint obrigatório antes de qualquer ação destrutiva ou irreversível:
   deleção de arquivos, migrations com DROP/ALTER, sobrescrita de flows aprovados,
   execução de comandos destrutivos. Aceita apenas "CONFIRMO" como aprovação.
+allowed-tools: shell
 ---
 
 # Skill: Confirm Destructive Action

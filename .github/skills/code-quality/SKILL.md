@@ -5,6 +5,7 @@ description: >
   Classifica issues em bloqueantes (impedem merge) e recomendações. Cobre
   arquitetura hexagonal, observabilidade (MDC), padrões Quarkus e cobertura de testes.
   Invocada pelo code-reviewer durante revisão pre-PR.
+allowed-tools: shell
 ---
 
 # Skill: Code Quality Checklist (Java/Quarkus Hexagonal)

@@ -5,6 +5,7 @@ description: >
   domínio (entidades, value objects, ports, use cases, eventos Kafka, endpoints REST)
   necessários para gerar domain-overview.md e openapi.yml. Invoque esta skill durante
   a fase de análise de qualquer serviço com arquitetura hexagonal.
+allowed-tools: shell
 ---
 
 # Skill: Extract Domain Model
