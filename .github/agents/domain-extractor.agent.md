@@ -28,6 +28,7 @@ hitl:
     - confluence_create_page
     - confluence_update_page
   always_show_plan: true
+  per_page_review: true
   branch_guard:
     allowed_branches:
       - dev
@@ -205,13 +206,45 @@ Aguarde aprovação antes de prosseguir.
 
 ---
 
+### Protocolo de revisão por página (HITL obrigatório)
+
+Antes de executar qualquer `confluence_create_page` ou `confluence_update_page`, siga este protocolo:
+
+1. **Exiba o conteúdo completo** que será publicado, usando o formato abaixo:
+
+```
+📄 Revisão de conteúdo — {Título da Página}
+Operação: {criar | atualizar}
+Parent: {título da página pai}
+
+─────────────────────────────────────────
+{conteúdo completo da página em Markdown}
+─────────────────────────────────────────
+
+✅ Aprovar e publicar
+✏️  Ajustar — descreva o que deve ser alterado
+⏭️  Pular esta página
+```
+
+2. **Aguarde a resposta do dev:**
+   - **aprovar** → execute a chamada Confluence (`confluence_create_page` ou `confluence_update_page`)
+   - **ajustar** → aplique os ajustes solicitados, exiba o conteúdo revisado novamente e repita o protocolo (loop até aprovação ou pulo)
+   - **pular** → não publique esta página; registre `PULADO: {Título da Página}` no resumo final
+
+3. Só avance para a próxima página após resolução (aprovado ou pulado) da atual.
+
+> **Regra:** Nunca chame `confluence_create_page` ou `confluence_update_page` sem aprovação explícita do dev para aquela página específica.
+
+---
+
 ### Passo 5 — Publicação no Confluence
 
 **5a — Verificar/criar página raiz do domínio**
 
 1. Invoque a skill `/lookup-domain-confluence` com `{domain-name}`
 2. Se não encontrado:
-   - `confluence_create_page(parent_id=123456, title="{domain-name}", body="# {domain-name}\n\nDomínio documentado via domain-extractor.")`
+   - Aplique o **Protocolo de revisão por página** com o conteúdo: `# {domain-name}\n\nDomínio documentado via domain-extractor.`
+   - Após aprovação: `confluence_create_page(parent_id=123456, title="{domain-name}", body={conteúdo aprovado})`
    - Armazene o ID retornado em `DOMAIN_PAGE_ID`
 3. Se encontrado: `DOMAIN_PAGE_ID` = id encontrado (não atualizar — é apenas container)
 
@@ -222,8 +255,12 @@ value objects, driving ports, driven ports, use cases, Kafka topics, endpoints R
 dependências externas). Estruture com seções equivalentes ao template domain-overview.md.
 
 1. `confluence_search('title:"[Domain] {service-name}" AND parent={DOMAIN_PAGE_ID}')`
-2. Se não encontrado: `confluence_create_page(parent_id=DOMAIN_PAGE_ID, title="[Domain] {service-name}", body={conteúdo gerado})`
-3. Se encontrado: invoque `/confirm-destructive` antes de `confluence_update_page(page_id={id}, ...)`
+2. Se não encontrado:
+   - Aplique o **Protocolo de revisão por página** com o conteúdo gerado
+   - Após aprovação: `confluence_create_page(parent_id=DOMAIN_PAGE_ID, title="[Domain] {service-name}", body={conteúdo aprovado})`
+3. Se encontrado:
+   - Aplique o **Protocolo de revisão por página** com o conteúdo atualizado
+   - Após aprovação: invoque `/confirm-destructive` e depois `confluence_update_page(page_id={id}, body={conteúdo aprovado})`
 
 **5c — Página `[OpenAPI] {service-name}`**
 
@@ -231,8 +268,12 @@ Conteúdo: OpenAPI 3.1 completo em bloco de código YAML, com schemas derivados 
 exemplos realistas e error responses (400, 404, 409, 422, 500).
 
 1. `confluence_search('title:"[OpenAPI] {service-name}" AND parent={DOMAIN_PAGE_ID}')`
-2. Se não encontrado: `confluence_create_page(parent_id=DOMAIN_PAGE_ID, title="[OpenAPI] {service-name}", body={openapi em bloco de código})`
-3. Se encontrado: invoque `/confirm-destructive` antes de `confluence_update_page(page_id={id}, ...)`
+2. Se não encontrado:
+   - Aplique o **Protocolo de revisão por página** com o OpenAPI gerado
+   - Após aprovação: `confluence_create_page(parent_id=DOMAIN_PAGE_ID, title="[OpenAPI] {service-name}", body={conteúdo aprovado})`
+3. Se encontrado:
+   - Aplique o **Protocolo de revisão por página** com o conteúdo atualizado
+   - Após aprovação: invoque `/confirm-destructive` e depois `confluence_update_page(page_id={id}, body={conteúdo aprovado})`
 
 **5d — Página `[Flow E2E] {domain-name}`**
 
@@ -277,8 +318,14 @@ Estrutura da página:
 ```
 
 1. `confluence_search('title:"[Flow E2E] {domain-name}" AND parent={DOMAIN_PAGE_ID}')`
-2. Se não encontrado: `confluence_create_page(parent_id=DOMAIN_PAGE_ID, title="[Flow E2E] {domain-name}", body={conteúdo gerado})`
-3. Se encontrado: buscar conteúdo existente via `confluence_get_page({id})`, mesclar dados do novo serviço (adicionar entrada na tabela de serviços, atualizar Kafka connections, regenerar diagrama E2E, adicionar linha no Changelog), invocar `/confirm-destructive`, depois `confluence_update_page(page_id={id}, ...)`
+2. Se não encontrado:
+   - Aplique o **Protocolo de revisão por página** com o conteúdo gerado
+   - Após aprovação: `confluence_create_page(parent_id=DOMAIN_PAGE_ID, title="[Flow E2E] {domain-name}", body={conteúdo aprovado})`
+3. Se encontrado:
+   - Buscar conteúdo existente via `confluence_get_page({id})`
+   - Mesclar dados do novo serviço (adicionar entrada na tabela de serviços, atualizar Kafka connections, regenerar diagrama E2E, adicionar linha no Changelog)
+   - Aplique o **Protocolo de revisão por página** com o conteúdo mesclado
+   - Após aprovação: invoque `/confirm-destructive` e depois `confluence_update_page(page_id={id}, body={conteúdo aprovado})`
 
 Ao final, informe ao dev os links das páginas publicadas.
 
