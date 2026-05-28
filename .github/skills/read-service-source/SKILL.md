@@ -1,15 +1,19 @@
+---
+name: read-service-source
+description: >
+  Acessa o código-fonte de um microserviço Java/Quarkus a partir de uma referência
+  GitHub (SSH, HTTPS ou shorthand) ou de um path local, garantindo que o repositório
+  esteja na branch correta (dev ou main) antes de qualquer leitura. Invoque esta skill
+  ao iniciar a extração de domínio de qualquer serviço.
+allowed-tools: shell
+---
+
 # Skill: Read Service Source
 
 ## Objetivo
 
 Acessar o código-fonte de um microserviço a partir de uma referência GitHub ou path local,
 garantindo que o repositório esteja na branch correta antes de qualquer leitura.
-
-## Quando usar
-
-Invocada pelo `domain-extractor` no Passo 1, para cada repositório informado pelo dev.
-
----
 
 ## Detecção do tipo de fonte
 
